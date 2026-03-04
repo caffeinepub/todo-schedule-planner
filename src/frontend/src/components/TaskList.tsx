@@ -1,9 +1,23 @@
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { AlertCircle, ListTodo, Loader2, Plus } from "lucide-react";
+import {
+  AlertCircle,
+  Download,
+  FileJson,
+  FileText,
+  ListTodo,
+  Loader2,
+  Plus,
+} from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import { useState } from "react";
 import {
@@ -15,6 +29,7 @@ import {
   useToggleComplete,
   useUpdateTask,
 } from "../hooks/useQueries";
+import { exportAsCSV, exportAsJSON } from "../utils/exportTasks";
 import { TaskCard } from "./TaskCard";
 import { TaskDialog } from "./TaskDialog";
 
@@ -109,15 +124,54 @@ export function TaskList() {
               {counts.active} left
             </span>
           </div>
-          <Button
-            size="sm"
-            onClick={openNew}
-            className="h-7 px-2.5 text-xs bg-primary text-primary-foreground hover:bg-primary/90 gap-1"
-            data-ocid="todo.add_button"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            New
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={!tasks || tasks.length === 0 || isLoading}
+                  className="h-7 w-7 px-0 border-border bg-secondary hover:bg-accent text-muted-foreground hover:text-foreground"
+                  data-ocid="export.open_modal_button"
+                  title="Export tasks"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-44"
+                data-ocid="export.dropdown_menu"
+              >
+                <DropdownMenuItem
+                  onClick={() => tasks && exportAsJSON(tasks)}
+                  className="gap-2 cursor-pointer"
+                  data-ocid="export.json_button"
+                >
+                  <FileJson className="w-3.5 h-3.5 text-amber-500" />
+                  Export as JSON
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => tasks && exportAsCSV(tasks)}
+                  className="gap-2 cursor-pointer"
+                  data-ocid="export.csv_button"
+                >
+                  <FileText className="w-3.5 h-3.5 text-emerald-500" />
+                  Export as CSV
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button
+              size="sm"
+              onClick={openNew}
+              className="h-7 px-2.5 text-xs bg-primary text-primary-foreground hover:bg-primary/90 gap-1"
+              data-ocid="todo.add_button"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              New
+            </Button>
+          </div>
         </div>
 
         {/* Quick-add input */}

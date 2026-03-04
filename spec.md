@@ -1,42 +1,24 @@
-# Todo List & Schedule Planner
+# Todo & Schedule Planner
 
 ## Current State
-New project. No existing code.
+The app has a task list (TaskList.tsx) and a schedule view (ScheduleView.tsx). Tasks have title, description, dueDate, dueTime, priority, and completed fields. The header has a logo and auth controls. No export functionality exists.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Todo list with task creation, editing, completion toggle, and deletion
-- Schedule/calendar planner with daily and weekly views
-- Tasks can have a due date, time, priority level, and optional description
-- Filter tasks by status (all, active, completed) and by date
-- Drag-and-drop or click-based scheduling of tasks onto a calendar
-- Persistent storage of tasks in the backend
+- Export button in the TaskList header (next to "New" button) that opens a small dropdown/popover with two options: "Download JSON" and "Download CSV"
+- JSON export: serializes all tasks from the current `tasks` array into a formatted JSON file and triggers a browser download
+- CSV export: converts tasks to comma-separated values with headers (id, title, description, dueDate, dueTime, priority, completed, createdAt) and triggers a browser download
+- A helper utility function `exportTasks` in a new `utils/exportTasks.ts` file
 
 ### Modify
-N/A
+- TaskList.tsx: import and wire export button with dropdown
 
 ### Remove
-N/A
+- Nothing
 
 ## Implementation Plan
-
-### Backend
-- `Task` data type with fields: id, title, description, dueDate (optional), dueTime (optional), priority (Low/Medium/High), completed, createdAt
-- CRUD operations: createTask, getTasks, updateTask, deleteTask, toggleComplete
-- Query tasks by date range for schedule view
-
-### Frontend
-- Main layout with two panels: Task List (left) and Schedule/Calendar (right)
-- Task list panel:
-  - Input to add a new task (title, date, time, priority)
-  - Filter tabs: All / Active / Completed
-  - Task cards with checkbox, title, due date/time badge, priority badge, edit and delete buttons
-  - Empty state for no tasks
-- Schedule panel:
-  - Toggle between Day view and Week view
-  - Day view: time slots from 6am–11pm, tasks placed at their scheduled time
-  - Week view: 7-column grid with tasks listed per day
-  - Click a task in schedule to mark complete or view details
-- Edit task modal/dialog
-- Responsive layout
+1. Create `src/frontend/src/utils/exportTasks.ts` with two exported functions: `exportAsJSON(tasks: Task[])` and `exportAsCSV(tasks: Task[])` that create Blob URLs and trigger downloads
+2. In `TaskList.tsx`, add an export button (Download icon) next to the "New" button that opens a DropdownMenu with "Export as JSON" and "Export as CSV" options
+3. Wire each menu item to call the corresponding export function with the current `tasks` array
+4. Add appropriate `data-ocid` markers to the export button and menu items
